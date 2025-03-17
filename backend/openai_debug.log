@@ -1,0 +1,19 @@
+DEBUG: 2025/03/18 00:05:53 WARNING: No OpenAI API key provided, using mock implementation
+DEBUG: 2025/03/18 00:06:28 WARNING: No OpenAI API key provided, using mock implementation
+DEBUG: 2025/03/18 00:06:35 WARNING: No OpenAI API key provided, using mock implementation
+DEBUG: 2025/03/18 00:06:56 WARNING: No OpenAI API key provided, using mock implementation
+DEBUG: 2025/03/18 00:07:20 WARNING: No OpenAI API key provided, using mock implementation
+DEBUG: 2025/03/18 00:09:46 WARNING: No OpenAI API key provided, using mock implementation
+DEBUG: 2025/03/18 00:09:51 Getting vocabulary for cache key: park_10
+DEBUG: 2025/03/18 00:09:51 Cache miss for key: park_10, generating new vocabulary
+DEBUG: 2025/03/18 00:09:51 Generating vocabulary for theme: park, count: 10
+DEBUG: 2025/03/18 00:09:51 Using mock implementation for theme: park
+DEBUG: 2025/03/18 00:09:51 Cached 10 vocabulary items for key: park_10
+DEBUG: 2025/03/18 00:13:39 WARNING: No OpenAI API key provided, using mock implementation
+DEBUG: 2025/03/18 00:13:47 Getting vocabulary for cache key: park_10
+DEBUG: 2025/03/18 00:13:47 Cache miss for key: park_10, generating new vocabulary
+DEBUG: 2025/03/18 00:13:47 Generating vocabulary for theme: park, count: 10
+DEBUG: 2025/03/18 00:13:47 Using mock implementation for theme: park
+DEBUG: 2025/03/18 00:13:47 Cached 10 vocabulary items for key: park_10
+DEBUG: 2025/03/18 00:13:48 Getting vocabulary for cache key: park_10
+DEBUG: 2025/03/18 00:13:48 Cache hit for key: park_10, returning 10 vocabulary items

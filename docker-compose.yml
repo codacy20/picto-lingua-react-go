@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - picto-lingua-network
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - UNSPLASH_ACCESS_KEY=${UNSPLASH_ACCESS_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PORT=8080
+      - GO111MODULE=on
+      - GOPROXY=https://proxy.golang.org,direct
+      - GOSUMDB=off
+    networks:
+      - picto-lingua-network
+    restart: unless-stopped
+    volumes:
+      - ./backend/.env:/app/.env:ro
+
+networks:
+  picto-lingua-network:
+    driver: bridge 
