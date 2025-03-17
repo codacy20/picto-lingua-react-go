@@ -49,6 +49,12 @@ func GetVocabulary(c *gin.Context) {
 		count = 20
 	}
 
+	// Get the language parameter, default to "english"
+	language := c.DefaultQuery("language", "english")
+
+	// Set the language in the OpenAI service
+	openAIService.SetLanguage(language)
+
 	// Get vocabulary from the service (with caching)
 	vocabulary, err := openAIService.GetVocabularyWithCache(theme, count)
 	if err != nil {
@@ -61,6 +67,7 @@ func GetVocabulary(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"theme":      theme,
 		"count":      len(vocabulary),
+		"language":   language,
 		"vocabulary": vocabulary,
 	})
 }

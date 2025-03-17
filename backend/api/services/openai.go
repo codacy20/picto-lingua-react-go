@@ -33,12 +33,14 @@ type OpenAIService struct {
 	client     *openai.Client
 	useMock    bool
 	mockThemes map[string][]models.VocabularyItem
+	language   string // Default language for vocabulary generation
 }
 
 // NewOpenAIService creates a new OpenAI service
 func NewOpenAIService(apiKey string) *OpenAIService {
 	service := &OpenAIService{
 		mockThemes: make(map[string][]models.VocabularyItem),
+		language:   "english", // Default language is English
 	}
 
 	// Check if API key is provided
@@ -86,17 +88,89 @@ func (s *OpenAIService) initMockData() {
 		{Word: "tip", Definition: "Money given to a server as a reward for good service", Example: "I left a generous tip at the cafe."},
 	}
 
+	// Mock data for park theme with Dutch translations
+	s.mockThemes["park_dutch"] = []models.VocabularyItem{
+		{
+			Word: "bench", Definition: "A long seat for two or more people", Example: "We sat on the bench in the park.",
+			DutchWord: "bank", DutchDefinition: "Een lange zitplaats voor twee of meer personen", DutchExample: "We zaten op de bank in het park.",
+		},
+		{
+			Word: "playground", Definition: "An area for children with swings, slides, etc.", Example: "The children had fun at the playground.",
+			DutchWord: "speeltuin", DutchDefinition: "Een gebied voor kinderen met schommels, glijbanen, etc.", DutchExample: "De kinderen hadden plezier in de speeltuin.",
+		},
+		{
+			Word: "fountain", Definition: "An ornamental structure that sends water into the air", Example: "The fountain in the park was beautiful.",
+			DutchWord: "fontein", DutchDefinition: "Een sierelement dat water in de lucht spuit", DutchExample: "De fontein in het park was prachtig.",
+		},
+		{
+			Word: "path", Definition: "A way or track for walking or cycling", Example: "We walked along the path through the park.",
+			DutchWord: "pad", DutchDefinition: "Een weg of spoor om te wandelen of fietsen", DutchExample: "We liepen over het pad door het park.",
+		},
+		{
+			Word: "tree", Definition: "A tall plant with a wooden trunk and branches", Example: "The trees in the park provide shade in summer.",
+			DutchWord: "boom", DutchDefinition: "Een hoge plant met een houten stam en takken", DutchExample: "De bomen in het park geven schaduw in de zomer.",
+		},
+	}
+
+	// Mock data for cafe theme with Dutch translations
+	s.mockThemes["cafe_dutch"] = []models.VocabularyItem{
+		{
+			Word: "coffee", Definition: "A hot drink made from roasted coffee beans", Example: "I ordered a coffee at the cafe.",
+			DutchWord: "koffie", DutchDefinition: "Een warme drank gemaakt van gebrande koffiebonen", DutchExample: "Ik bestelde een koffie in het café.",
+		},
+		{
+			Word: "barista", Definition: "A person who makes and serves coffee", Example: "The barista made a beautiful design in my latte.",
+			DutchWord: "barista", DutchDefinition: "Een persoon die koffie maakt en serveert", DutchExample: "De barista maakte een mooie tekening in mijn latte.",
+		},
+		{
+			Word: "menu", Definition: "A list of food and drinks available", Example: "The cafe has a varied menu with many options.",
+			DutchWord: "menu", DutchDefinition: "Een lijst met beschikbaar eten en drinken", DutchExample: "Het café heeft een gevarieerd menu met veel opties.",
+		},
+		{
+			Word: "pastry", Definition: "A sweet baked food made with dough", Example: "The cafe sells delicious pastries.",
+			DutchWord: "gebak", DutchDefinition: "Een zoet gebakken voedsel gemaakt van deeg", DutchExample: "Het café verkoopt heerlijk gebak.",
+		},
+		{
+			Word: "table", Definition: "A piece of furniture with a flat top", Example: "We found a table by the window in the cafe.",
+			DutchWord: "tafel", DutchDefinition: "Een meubelstuk met een plat oppervlak", DutchExample: "We vonden een tafel bij het raam in het café.",
+		},
+	}
+
 	// Add more mock themes as needed
+}
+
+// SetLanguage sets the language for vocabulary generation
+func (s *OpenAIService) SetLanguage(language string) {
+	s.language = strings.ToLower(language)
+	debugLogger.Printf("Language set to: %s", s.language)
+}
+
+// GetLanguage returns the current language setting
+func (s *OpenAIService) GetLanguage() string {
+	return s.language
 }
 
 // GenerateVocabulary generates vocabulary words for a given theme
 func (s *OpenAIService) GenerateVocabulary(theme string, count int) ([]models.VocabularyItem, error) {
-	debugLogger.Printf("Generating vocabulary for theme: %s, count: %d", theme, count)
+	debugLogger.Printf("Generating vocabulary for theme: %s, count: %d, language: %s", theme, count, s.language)
 
 	// If using mock implementation, return mock data
 	if s.useMock {
 		debugLogger.Printf("Using mock implementation for theme: %s", theme)
-		mockData, ok := s.mockThemes[theme]
+
+		mockThemeKey := theme
+		// If language is set to Dutch, try to use the Dutch version of the theme
+		if s.language == "dutch" {
+			dutchThemeKey := theme + "_dutch"
+			if _, ok := s.mockThemes[dutchThemeKey]; ok {
+				mockThemeKey = dutchThemeKey
+				debugLogger.Printf("Using Dutch mock data for theme: %s", mockThemeKey)
+			} else {
+				debugLogger.Printf("Dutch mock data not available for theme: %s, falling back to English", theme)
+			}
+		}
+
+		mockData, ok := s.mockThemes[mockThemeKey]
 		if !ok {
 			return nil, fmt.Errorf("mock data not available for theme: %s", theme)
 		}
@@ -115,7 +189,28 @@ func (s *OpenAIService) GenerateVocabulary(theme string, count int) ([]models.Vo
 		return nil, fmt.Errorf("OpenAI client not initialized")
 	}
 
-	prompt := fmt.Sprintf(`Generate %d vocabulary words related to the theme "%s". 
+	var prompt string
+	if s.language == "dutch" {
+		prompt = fmt.Sprintf(`Generate %d vocabulary words related to the theme "%s" in both English and Dutch.
+Each word should have:
+- English word
+- English definition
+- Example sentence in English
+- Dutch translation of the word
+- Dutch definition
+- Example sentence in Dutch
+
+Format your response as a JSON array of objects, where each object contains:
+- "word": the English vocabulary word
+- "definition": a brief English definition of the word
+- "example": a simple example sentence using the word in English
+- "dutch_word": the Dutch translation of the word
+- "dutch_definition": a brief Dutch definition of the word
+- "dutch_example": a simple example sentence using the word in Dutch
+
+Only provide the JSON output, no additional text.`, count, theme)
+	} else {
+		prompt = fmt.Sprintf(`Generate %d vocabulary words related to the theme "%s". 
 Each word should have a definition and a simple example sentence.
 Format your response as a JSON array of objects, where each object contains:
 - "word": the vocabulary word
@@ -123,6 +218,7 @@ Format your response as a JSON array of objects, where each object contains:
 - "example": a simple example sentence using the word
 
 Only provide the JSON output, no additional text.`, count, theme)
+	}
 
 	debugLogger.Printf("Using prompt: %s", prompt)
 
@@ -179,7 +275,7 @@ var vocabularyCache = make(map[string][]models.VocabularyItem)
 
 // GetVocabularyWithCache gets vocabulary for a theme using caching
 func (s *OpenAIService) GetVocabularyWithCache(theme string, count int) ([]models.VocabularyItem, error) {
-	cacheKey := fmt.Sprintf("%s_%d", theme, count)
+	cacheKey := fmt.Sprintf("%s_%d_%s", theme, count, s.language)
 	debugLogger.Printf("Getting vocabulary for cache key: %s", cacheKey)
 
 	// Check if we have cached results

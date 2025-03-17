@@ -21,6 +21,9 @@ export interface VocabularyItem {
   word: string;
   definition: string;
   example?: string;
+  dutch_word?: string;
+  dutch_definition?: string;
+  dutch_example?: string;
 }
 
 export interface Theme {
@@ -59,9 +62,13 @@ export const getImages = async (theme: string): Promise<Image[]> => {
   return response.data.images;
 };
 
-export const getVocabulary = async (theme: string, count: number = 10): Promise<VocabularyItem[]> => {
+export const getVocabulary = async (
+  theme: string, 
+  count: number = 10, 
+  language: string = 'english'
+): Promise<VocabularyItem[]> => {
   const response = await axios.get(`${API_BASE_URL}/vocabulary`, {
-    params: { theme, count }
+    params: { theme, count, language }
   });
   return response.data.vocabulary;
 };

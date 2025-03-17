@@ -18,9 +18,12 @@ type Image struct {
 
 // VocabularyItem represents a vocabulary word and its definition
 type VocabularyItem struct {
-	Word       string `json:"word"`
-	Definition string `json:"definition"`
-	Example    string `json:"example,omitempty"`
+	Word            string `json:"word"`
+	Definition      string `json:"definition"`
+	Example         string `json:"example,omitempty"`
+	DutchWord       string `json:"dutch_word,omitempty"`
+	DutchDefinition string `json:"dutch_definition,omitempty"`
+	DutchExample    string `json:"dutch_example,omitempty"`
 }
 
 // Theme represents a learning theme

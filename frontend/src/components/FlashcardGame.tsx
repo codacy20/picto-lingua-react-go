@@ -151,7 +151,14 @@ const FlashcardGame: React.FC<FlashcardGameProps> = ({
             position="relative"
           >
             {!showDefinition ? (
-              <Heading size="lg">{currentWord.word}</Heading>
+              <Stack gap={2}>
+                <Heading size="lg">{currentWord.word}</Heading>
+                {currentWord.dutch_word && (
+                  <Text fontSize="md" color="teal.600">
+                    {currentWord.dutch_word}
+                  </Text>
+                )}
+              </Stack>
             ) : (
               <Stack gap={3}>
                 <Text fontSize="lg" fontWeight="bold">
@@ -160,6 +167,16 @@ const FlashcardGame: React.FC<FlashcardGameProps> = ({
                 {currentWord.example && (
                   <Text fontSize="md" fontStyle="italic" color="gray.600">
                     "{currentWord.example}"
+                  </Text>
+                )}
+                {currentWord.dutch_definition && (
+                  <Text fontSize="lg" fontWeight="bold" color="teal.600" mt={4}>
+                    {currentWord.dutch_definition}
+                  </Text>
+                )}
+                {currentWord.dutch_example && (
+                  <Text fontSize="md" fontStyle="italic" color="teal.600">
+                    "{currentWord.dutch_example}"
                   </Text>
                 )}
               </Stack>

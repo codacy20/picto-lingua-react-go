@@ -4,6 +4,7 @@ import ImageGallery from './components/ImageGallery';
 import GameModeSelector from './components/GameModeSelector';
 import FlashcardGame from './components/FlashcardGame';
 import ThemeSelector from './components/ThemeSelector';
+import LanguageSelector from './components/LanguageSelector';
 import { getThemes, getImages, getVocabulary, Theme, Image, VocabularyItem } from './services/api';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
   const [gameMode, setGameMode] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('english');
 
   // Fetch themes on component mount
   useEffect(() => {
@@ -61,7 +63,7 @@ function App() {
       if (selectedTheme && gameMode === 'flashcards') {
         try {
           setLoading(true);
-          const fetchedVocabulary = await getVocabulary(selectedTheme.id, 10);
+          const fetchedVocabulary = await getVocabulary(selectedTheme.id, 10, selectedLanguage);
           setVocabulary(fetchedVocabulary);
           setLoading(false);
         } catch (err) {
@@ -74,7 +76,7 @@ function App() {
     if (selectedTheme && gameMode === 'flashcards') {
       fetchVocabulary();
     }
-  }, [selectedTheme, gameMode]);
+  }, [selectedTheme, gameMode, selectedLanguage]);
 
   // Handle theme selection
   const handleThemeSelect = (theme: Theme) => {
@@ -101,6 +103,11 @@ function App() {
     setGameMode(null);
   };
 
+  // Handle language selection
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
+  };
+
   return (
     <Container maxW="container.xl" py={5}>
       <Flex direction="column" gap={5}>
@@ -108,6 +115,13 @@ function App() {
           <Heading as="h1" size="xl">Picto Lingua</Heading>
           <Heading as="h2" size="md" mt={2}>Learn Languages Through Images</Heading>
         </Box>
+
+        <Flex justifyContent="flex-end">
+          <LanguageSelector
+            selectedLanguage={selectedLanguage}
+            onLanguageChange={handleLanguageChange}
+          />
+        </Flex>
 
         {error && (
           <Box p={4} bg="red.100" color="red.800" borderRadius="md" mb={4}>

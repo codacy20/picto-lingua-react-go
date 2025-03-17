@@ -5,6 +5,7 @@ Picto Lingua is a language learning application that helps users learn vocabular
 ## Features
 
 - Theme-based learning with visual context
+- Multiple language support (English and Dutch)
 - Flashcard game mode for vocabulary practice
 - Image selection from Unsplash API
 - Vocabulary generated through OpenAI
@@ -69,7 +70,8 @@ Picto Lingua is a language learning application that helps users learn vocabular
 
 ### Vocabulary
 
-- `GET /api/vocabulary?theme=<theme>&count=<count>` - Get vocabulary words for a specific theme
+- `GET /api/vocabulary?theme=<theme>&count=<count>&language=<language>` - Get vocabulary words for a specific theme and language
+  - `language` parameter can be "english" (default) or "dutch"
 
 ### Sessions
 
