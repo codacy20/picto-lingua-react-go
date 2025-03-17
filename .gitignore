@@ -1,0 +1,33 @@
+# Environment variables
+.env
+
+# Go build output
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go testing files
+*.test
+*.out
+
+# Go dependencies
+/vendor/
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# React build
+frontend/build/
+frontend/dist/
+
+# Misc
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo 
